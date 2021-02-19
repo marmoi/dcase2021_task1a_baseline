@@ -96,7 +96,8 @@ The system implements a convolutional neural network (CNN) based approach, where
   - Model performance after each epoch is evaluated on the validation set, and best performing model is selected
   
 **Network summary**
-	_________________________________________________________________
+
+    _________________________________________________________________
 	Layer (type)                 Output Shape              Param #   
 	=================================================================
 	conv2d (Conv2D)              (None, 40, 500, 16)       800       
@@ -135,8 +136,8 @@ The system implements a convolutional neural network (CNN) based approach, where
 	=================================================================
 	Total params: 46,246
 	Trainable params: 46,118
-	Non-trainable params: 128
-	_________________________________________________________________
+  	Non-trainable params: 128
+  	_________________________________________________________________
 
      Input shape                     : (None, 40, 500, 1)
      Output shape                    : (None, 10)
@@ -146,21 +147,21 @@ The system implements a convolutional neural network (CNN) based approach, where
 
 The cross-validation setup provided with the *TAU Urban Acoustic Scenes 2020 Mobile Development dataset* is used to evaluate the performance of the baseline system. Results are calculated using TensorFlow in GPU mode (using Nvidia Tesla V100 GPU card). Because results produced with GPU card are generally non-deterministic, the system was trained and tested 10 times, and mean and standard deviation of the performance from these 10 independent trials are shown in the results tables.
 
-| Scene class   | Accuracy |   A       B       C       S1      S2      S3      S4      S5      S6  | Logloss  
-| ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
-| airport       | 26.0%    | 45.5    15.6    33.3    12.1    36.4    33.3    12.1    24.2    21.2  | 1.527    
-| bus           | 38.7%    | 72.7    30.3    60.6    21.2    45.5    39.4    21.2    15.2    42.4  | 1.689    
-| metro         | 44.4%    | 60.6    66.7    54.5    18.2    30.3    33.3    45.5    39.4    51.5  | 1.633    
-| metro_station | 39.7%    | 48.5    45.5    30.3    30.3    33.3    48.5    30.3    42.4    48.5  | 1.708    
-| park          | 62.3%    | 90.9    87.9    93.9    72.7    57.6    63.6    24.2    39.4    30.3  | 1.333    
-| public_square | 34.0%    | 51.5    33.3    30.3    42.4    21.2    54.5    33.3    30.3    9.1   | 1.864    
-| shopping_mall | 63.3%    | 63.6    84.8    69.7    45.5    60.6    63.6    66.7    33.3    81.8  | 1.102    
-| street_pede.. | 43.4%    | 51.5    51.5    51.5    54.5    57.6    48.5    21.2    9.1     45.5  | 1.644    
-| street_traf.. | 60.6%    | 72.7    63.6    63.6    72.7    57.6    54.5    57.6    72.7    30.3  | 1.396    
-| tram          | 40.9%    | 66.7    33.3    62.5    57.6    12.1    33.3    27.3    45.5    30.3  | 1.610    
-| ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
-| Accuracy      | 45.3%    | 62.4    51.3    55.0    42.7    41.2    47.3    33.9    35.2    39.1  |          
-| Logloss       |          | 1.003   1.325   1.256   1.591   1.661   1.387   1.978   1.912   1.840 | 1.551    
+    | Scene class   | Accuracy |   A       B       C       S1      S2      S3      S4      S5      S6  | Logloss  
+    | ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
+    | airport       | 26.0%    | 45.5    15.6    33.3    12.1    36.4    33.3    12.1    24.2    21.2  | 1.527    
+    | bus           | 38.7%    | 72.7    30.3    60.6    21.2    45.5    39.4    21.2    15.2    42.4  | 1.689    
+    | metro         | 44.4%    | 60.6    66.7    54.5    18.2    30.3    33.3    45.5    39.4    51.5  | 1.633    
+    | metro_station | 39.7%    | 48.5    45.5    30.3    30.3    33.3    48.5    30.3    42.4    48.5  | 1.708    
+    | park          | 62.3%    | 90.9    87.9    93.9    72.7    57.6    63.6    24.2    39.4    30.3  | 1.333    
+    | public_square | 34.0%    | 51.5    33.3    30.3    42.4    21.2    54.5    33.3    30.3    9.1   | 1.864    
+    | shopping_mall | 63.3%    | 63.6    84.8    69.7    45.5    60.6    63.6    66.7    33.3    81.8  | 1.102    
+    | street_pede.. | 43.4%    | 51.5    51.5    51.5    54.5    57.6    48.5    21.2    9.1     45.5  | 1.644    
+    | street_traf.. | 60.6%    | 72.7    63.6    63.6    72.7    57.6    54.5    57.6    72.7    30.3  | 1.396    
+    | tram          | 40.9%    | 66.7    33.3    62.5    57.6    12.1    33.3    27.3    45.5    30.3  | 1.610    
+    | ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
+    | Accuracy      | 45.3%    | 62.4    51.3    55.0    42.7    41.2    47.3    33.9    35.2    39.1  |          
+    | Logloss       |          | 1.003   1.325   1.256   1.591   1.661   1.387   1.978   1.912   1.840 | 1.551    
 
 
 
