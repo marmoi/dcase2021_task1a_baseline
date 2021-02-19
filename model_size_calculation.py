@@ -169,40 +169,39 @@ def get_lite_model_size(interpreter, verbose=True, ui=None):
         ui.row_sep()
 
     layer_details = interpreter.get_tensor_details()
-
+    interpreter.allocate_tensors()
     for l in layer_details:
         # Loop layer by layer
         current_parameters_count = 0
         current_parameters_count_nonzero = 0
         current_parameters_bytes = 0
         current_parameters_bytes_nonzero = 0
+        w = interpreter.get_tensor(l['index'])
 
-        weights = interpreter.get_tensor(l['index'])
         # Calculate only the quantize layers
-        if 'dequantize' not in l['name']:
-            for w in weights:
+        if l['dtype'] == numpy.float16:
 
-                current_parameters_count += numpy.prod(w.shape)
-                current_parameters_count_nonzero += numpy.count_nonzero(w.flatten())
+            current_parameters_count += numpy.prod(w.shape)
+            current_parameters_count_nonzero += numpy.count_nonzero(w.flatten())
 
-                if w.dtype in ['single', 'float32', 'int32', 'uint32']:
-                    bytes = 32 / 8
+            if w.dtype in ['single', 'float32', 'int32', 'uint32']:
+                bytes = 32 / 8
 
-                elif w.dtype in ['float16', 'int16', 'uint16']:
-                    bytes = 16 / 8
+            elif w.dtype in ['float16', 'int16', 'uint16']:
+                bytes = 16 / 8
 
-                elif w.dtype in ['double', 'float64', 'int64', 'uint64']:
-                    bytes = 64 / 8
+            elif w.dtype in ['double', 'float64', 'int64', 'uint64']:
+                bytes = 64 / 8
 
-                elif w.dtype in ['int8', 'uint8']:
-                    bytes = 8 / 8
+            elif w.dtype in ['int8', 'uint8']:
+                bytes = 8 / 8
 
-                else:
-                    print('UNKNOWN TYPE', w.dtype)
+            else:
+                print('UNKNOWN TYPE', w.dtype)
 
-                current_parameters_bytes += numpy.prod(w.shape) * bytes
-                current_parameters_bytes_nonzero += numpy.count_nonzero(w.flatten()) * bytes
-
+            current_parameters_bytes += numpy.prod(w.shape) * bytes
+            current_parameters_bytes_nonzero += numpy.count_nonzero(w.flatten()) * bytes
+            # Add to total
             parameters_count += current_parameters_count
             parameters_count_nonzero += current_parameters_count_nonzero
 
