@@ -146,32 +146,75 @@ The system implements a convolutional neural network (CNN) based approach, where
 #### Results for development dataset
 
 The cross-validation setup provided with the *TAU Urban Acoustic Scenes 2020 Mobile Development dataset* is used to evaluate the performance of the baseline system. Results are calculated using TensorFlow in GPU mode (using Nvidia Tesla V100 GPU card). Because results produced with GPU card are generally non-deterministic, the system was trained and tested 10 times, and mean and standard deviation of the performance from these 10 independent trials are shown in the results tables.
+ 
 
-    | Scene class   | Accuracy |   A       B       C       S1      S2      S3      S4      S5      S6  | Logloss  
-    | ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
-    | airport       | 26.0%    | 45.5    15.6    33.3    12.1    36.4    33.3    12.1    24.2    21.2  | 1.527    
-    | bus           | 38.7%    | 72.7    30.3    60.6    21.2    45.5    39.4    21.2    15.2    42.4  | 1.689    
-    | metro         | 44.4%    | 60.6    66.7    54.5    18.2    30.3    33.3    45.5    39.4    51.5  | 1.633    
-    | metro_station | 39.7%    | 48.5    45.5    30.3    30.3    33.3    48.5    30.3    42.4    48.5  | 1.708    
-    | park          | 62.3%    | 90.9    87.9    93.9    72.7    57.6    63.6    24.2    39.4    30.3  | 1.333    
-    | public_square | 34.0%    | 51.5    33.3    30.3    42.4    21.2    54.5    33.3    30.3    9.1   | 1.864    
-    | shopping_mall | 63.3%    | 63.6    84.8    69.7    45.5    60.6    63.6    66.7    33.3    81.8  | 1.102    
-    | street_pede.. | 43.4%    | 51.5    51.5    51.5    54.5    57.6    48.5    21.2    9.1     45.5  | 1.644    
-    | street_traf.. | 60.6%    | 72.7    63.6    63.6    72.7    57.6    54.5    57.6    72.7    30.3  | 1.396    
-    | tram          | 40.9%    | 66.7    33.3    62.5    57.6    12.1    33.3    27.3    45.5    30.3  | 1.610    
-    | ------------- | ------   | -----   -----   -----   -----   -----   -----   -----   -----   ----- | -------  
-    | Accuracy      | 45.3%    | 62.4    51.3    55.0    42.7    41.2    47.3    33.9    35.2    39.1  |          
-    | Logloss       |          | 1.003   1.325   1.256   1.591   1.661   1.387   1.978   1.912   1.840 | 1.551    
+| Scene label       | Accuracy |   A   |   B   |    C  |   S1  |   S2  |   S3  |   S4  |   S5  |   S6  | Log loss|  
+| -------------     | ------   | ----- | ----- |  -----| ----- | ----- | ----- | ----- | ----- | ----- | ------- | 
+| Airport           | 31.1%    | 48.5  |  37.5 |  27.3 |  27.3 |  30.3 |  33.3 |  30.3 |  30.3 |  15.2 |  1.497  | 
+| Bus               | 40.1%    | 75.8  |  36.4 |  57.6 |  24.2 |  48.5 |  18.2 |  21.2 |  33.3 |  45.5 |  1.475  |  
+| Metro             | 48.1%    | 66.7  |  60.6 |  48.5 |  27.3 |  45.5 |  51.5 |  60.6 |  21.2 |  51.5 |  1.457  |  
+| Metro station     | 29.6%    | 42.4  |  42.4 |  33.3 |  18.2 |  18.2 |  24.2 |  24.2 |  36.4 |  27.3 |  2.060  |  
+| Park              | 63.6%    | 84.8  |  75.8 |  90.9 |  63.6 |  60.6 |  57.6 |  36.4 |  60.6 |  42.4 |  1.217  |  
+| Public square     | 36.0%    | 51.5  |  39.4 |  42.4 |  48.5 |  39.4 |  30.3 |  30.3 |  21.2 |  21.2 |  1.738  |  
+| Shopping mall     | 61.3%    | 63.6  |  72.7 |  81.8 |  48.5 |  63.6 |  63.6 |  45.5 |  48.5 |  63.6 |  1.136  |  
+| Pedestrian street | 47.1%    | 63.6  |  63.6 |  57.6 |  63.6 |  42.4 |  45.5 |  21.2 |  36.4 |  30.3 |  1.522  |  
+| Traffic street    | 68.0%    | 78.8  |  69.7 |  60.6 |  75.8 |  60.6 |  66.7 |  69.7 |  75.8 |  54.5 |  1.145  |  
+| Tram              | 44.3%    | 63.6  |  24.2 |  62.5 |  45.5 |  30.3 |  54.5 |  45.5 |  42.4 |  30.3 |  1.360  |  
+| -------------     | ------   | ----- |  -----| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------- |  
+| Accuracy          | **46.9%**<br>(+/-1.4)| 62.4  |  51.3 |  55.0  |  42.7  |  41.2  |  47.3  |  33.9  |  35.2  |  39.1  |  **1.461**<br>(+/-0.08)|  
+                                                                                
+
+**Note:** The reported system performance is not exactly reproducible due to varying setups. However, you should be able obtain very similar results.
 
 
+### Model size
+ Manual quantization acoustic model
 
+    | Name                        | Param     |  NZ Param  | Size                        |  NZ Size                    | 
+    | --------------------------- | --------- |  --------- | --------------------------- |  -------------------------- |
+    | conv2d_3                    | 800       |  800       | 1.562 KB                    |  1.562 KB                   |
+    | batch_normalization_3       | 64        |  64        | 256 bytes                   |  256 bytes                  |
+    | activation_3                | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | conv2d_4                    | 12560     |  12560     | 24.53 KB                    |  24.53 KB                   |
+    | batch_normalization_4       | 64        |  64        | 256 bytes                   |  256 bytes                  |
+    | activation_4                | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | max_pooling2d_2             | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | dropout_3                   | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | conv2d_5                    | 25120     |  25120     | 49.06 KB                    |  49.06 KB                   |
+    | batch_normalization_5       | 128       |  128       | 512 bytes                   |  512 bytes                  |
+    | activation_5                | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | max_pooling2d_3             | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | dropout_4                   | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | flatten_1                   | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | dense_2                     | 6500      |  6500      | 12.7 KB                     |  12.7 KB                    |
+    | dropout_5                   | 0         |  0         | 0 bytes                     |  0 bytes                    |
+    | dense_3                     | 1010      |  1010      | 1.973 KB                    |  1.973 KB                   |
+    | --------------------------- | --------- |  --------- | --------------------------- |  -------------------------- |
+    | Total                       | 46246     |  46246     | 93,004 bytes (90.82 KB)     |  93,004 bytes (90.82 KB)    |
+
+ TFLite acoustic model
+
+    | Name                        | Param     | NZ Param  | Size                        |  NZ Size                   |   
+    | --------------------------- | --------- | --------- | --------------------------- |  --------------------------|  
+    | ReadVariableOp              | 784       | 784       | 1.531 KB                    |  1.531 KB                  |   
+    | Conv2D_bias                 | 16        | 16        | 32 bytes                    |  32 bytes                  |   
+    | ReadVariableOp              | 12544     | 12544     | 24.5 KB                     |  24.5 KB                   |   
+    | Conv2D_bias                 | 16        | 16        | 32 bytes                    |  32 bytes                  |   
+    | ReadVariableOp              | 25088     | 25088     | 49 KB                       |  49 KB                     |   
+    | Conv2D_bias                 | 32        | 32        | 64 bytes                    |  64 bytes                  |   
+    | transpose                   | 6400      | 6400      | 12.5 KB                     |  12.5 KB                   |   
+    | MatMul_bias                 | 100       | 100       | 200 bytes                   |  200 bytes                 |   
+    | transpose                   | 1000      | 1000      | 1.953 KB                    |  1.953 KB                  |   
+    | MatMul_bias                 | 10        | 10        | 20 bytes                    |  20 bytes                  |   
+    | --------------------------- | --------- | --------- | --------------------------- |  --------------------------|  
+    | Total                       | 45990     | 45990     | 91,980 bytes (89.82 KB)     |  91,980 bytes (89.82 KB)   |
 Usage
 =====
 
 For the subtask there are two separate application (.py file):
 
-- `task1a.py`, DCASE2021 baseline for Task 1A, with keras model quantization
-- `task1a_tflite.py`, DCASE2021 baseline for Task 1A, with TFLite quantification
+- `task1a.py`, DCASE2021 baseline for Task 1A, with Keras model quantization
+- `task1a_tflite.py`, DCASE2021 baseline for Task 1A, with TFLite quantization
 
 ### Application arguments
 
