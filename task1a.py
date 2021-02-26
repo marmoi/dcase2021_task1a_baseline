@@ -4,7 +4,9 @@
 # Task 1A: low-complexity ASC with Multiple Devices
 # Baseline system
 # ---------------------------------------------
-# Author: Toni Heittola ( toni.heittola@tuni.fi ), Tampere University / Audio Research Group
+# Author: Irene Martin Morato
+# Based on the code dcase 2020 task A baseline from Toni Heittola
+# Tampere University / Audio Research Group
 # License: MIT
 
 import dcase_util
@@ -230,7 +232,7 @@ def main(argv):
                 folds=active_folds,
                 param=param,
                 log=log,
-                overwrite=overwrite
+                overwrite=overwrite,
             )
 
             timer.stop()
@@ -302,7 +304,7 @@ def main(argv):
                     db=db,
                     folds=active_folds,
                     param=param,
-                    log=log,
+                    log=log
                 )
                 log.foot(
                     time=timer.elapsed(),
@@ -1149,6 +1151,7 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
     ]
 
     class_wise_results = numpy.zeros((1 + len(devices), len(db.scene_labels())))
+    class_wise_results_loss = numpy.zeros((1 + len(devices), len(db.scene_labels())))
     fold = 1
 
     fold_results_filename = os.path.join(
@@ -1254,12 +1257,27 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
         )
 
     logloss_device_wise = {}
-    for decice_label in list(y_true_device.keys()):
-        logloss_device_wise[decice_label] = log_loss(
-            y_true=y_true_device[decice_label],
-            y_pred=y_pred_device[decice_label],
+    for device_label in list(y_true_device.keys()):
+
+        logloss_device_wise[device_label] = log_loss(
+            y_true=y_true_device[device_label],
+            y_pred=y_pred_device[device_label],
             labels=list(range(len(db.scene_labels())))
         )
+
+    for scene_label_id, scene_label in enumerate(db.scene_labels()):
+
+        class_wise_results_loss[0, scene_label_id] = logloss_class_wise[scene_label]
+
+        for device_id, device_label in enumerate(y_true_device.keys()):
+            scene_device_idx = [i for i in range(len(y_true_device[device_label])) if y_true_device[device_label][i] == scene_label_id]
+            y_true_device_scene = [y_true_device[device_label][i] for i in scene_device_idx]
+            y_pred_device_scene = [y_pred_device[device_label][i] for i in scene_device_idx]
+            class_wise_results_loss[1 + device_id, scene_label_id] = log_loss(
+                y_true=y_true_device_scene,
+                y_pred=y_pred_device_scene,
+                labels=list(range(len(db.scene_labels())))
+            )
 
     results = evaluator.results()
     all_results.append(results)
@@ -1309,7 +1327,7 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
         {
             'application_mode': application_mode,
             'set_id': param.active_set(),
-            'class_wise_results': class_wise_results.tolist(),
+            'class_wise_results': class_wise_results_loss.tolist(),
             'overall_accuracy': overall[0],
             'overall_logloss': logloss_overall,
             'all_results': all_results,
@@ -1324,22 +1342,22 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
     log.row_reset()
 
     # Table header
-    column_headers = ['Scene', 'Accuracy']
-    column_widths = [16, 9]
-    column_types = ['str20', 'float1_percentage']
+    column_headers = ['Scene', 'Logloss']
+    column_widths = [16, 10]
+    column_types = ['str20', 'float3']
     column_separators = [True, True]
     for dev_id, device in enumerate(devices):
         column_headers.append(device.upper())
         column_widths.append(8)
-        column_types.append('float1')
+        column_types.append('float3')
         if dev_id < len(devices) - 1:
             column_separators.append(False)
         else:
             column_separators.append(True)
 
-    column_headers.append('Logloss')
-    column_widths.append(10)
-    column_types.append('float3')
+    column_headers.append('Accuracy')
+    column_widths.append(8)
+    column_types.append('float1_percentage')
     column_separators.append(False)
 
     log.row(
@@ -1347,23 +1365,27 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
         widths=column_widths,
         types=column_types,
         separators=column_separators,
-        indent=2
+        indent=3
     )
     log.row_sep()
 
     # Class-wise rows
     for scene_label_id, scene_label in enumerate(db.scene_labels()):
         row_data = [scene_label]
-        for id in range(class_wise_results.shape[0]):
-            row_data.append(class_wise_results[id, scene_label_id] * 100.0)
-        row_data.append(logloss_class_wise[scene_label])
+        for id in range(class_wise_results_loss.shape[0]):
+            row_data.append(class_wise_results_loss[id, scene_label_id])
+        row_data.append(class_wise_results[0,scene_label_id]* 100.0)
         log.row(*row_data)
     log.row_sep()
 
     # Last row
-    column_values = ['Accuracy']
-    for value in overall:
-        column_values.append(value * 100.0)
+    column_values = ['Logloss']
+    column_values.append(logloss_overall)
+    column_types.append('float3')
+
+    for device_label in devices:
+        column_values.append(logloss_device_wise[device_label])
+
     column_values.append(' ')
 
     log.row(
@@ -1371,14 +1393,14 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
         types=column_types
     )
 
-    column_values = ['Logloss', ' ']
-    column_types = ['str20', 'float3']
-    for device_label in devices:
-        column_values.append(logloss_device_wise[device_label])
-        column_types.append('float3')
+    column_values = ['Accuracy', ' ']
+    column_types = ['str20', 'float1_percentage']
+    for device_id, device_label in enumerate(devices[0:]):
+        column_values.append(numpy.mean(class_wise_results[device_id+1,:])*100)
+        column_types.append('float1_percentage')
 
-    column_values.append(logloss_overall)
-    column_types.append('float3')
+    column_values.append(numpy.mean(class_wise_results[0, :]) * 100)
+    column_types.append('float1_percentage')
 
     log.row(
         *column_values,
@@ -1386,6 +1408,7 @@ def do_evaluation(db, folds, param, log, application_mode='default'):
     )
 
     log.line()
+
 
 
 def do_model_size_calculation(db, folds, param, log):
@@ -1454,8 +1477,6 @@ def do_model_size_calculation(db, folds, param, log):
 
         log.section_header('Acoustic model')
         model_size = get_keras_model_size(keras_model=keras_model, verbose=True, ui=log)
-
-        print("Quantized model in Mb:", os.path.getsize(fold_model_filename) / float(2 ** 20))
 
         log.row_reset()
         log.row('', 'param', 'non-zero', 'sparsity', 'size', widths=[25, 20, 20, 20, 20])
