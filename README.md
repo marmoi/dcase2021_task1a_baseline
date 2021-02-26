@@ -3,7 +3,7 @@ DCASE2021 - Task 1 A - Baseline systems
 
 Author:
 **Irene Martin**, *Tampere University* 
-[Email](mailto:irene.martinmorato@tuni.fi), 
+[Email](mailto:irene.martinmorato@tuni.fi). 
 Adaptations from the original code DCASE2020 - Task 1 by
 **Toni Heittola**, *Tampere University* 
 
@@ -37,7 +37,7 @@ To setup Anaconda environment for the system use following:
 Introduction
 ============
 
-This is the baseline system for the [Acoustic scene classification task (Task 1A)] in Detection and Classification of Acoustic Scenes and Events 2021 (DCASE2021) challenge. The system is intended to provide a simple entry-level state-of-the-art approach that gives reasonable results in the subtask 1A. The baseline system is built on [dcase_util](https://github.com/DCASE-REPO/dcase_util) toolbox (>=version 0.2.16). 
+This is the baseline system for the Low-Complexity Acoustic Scene Classification with Multiple Devices (Subtask A) in Detection and Classification of Acoustic Scenes and Events 2021 (DCASE2021) challenge. The system is intended to provide a simple entry-level state-of-the-art approach that gives reasonable results. The baseline system is built on [dcase_util](https://github.com/DCASE-REPO/dcase_util) toolbox (>=version 0.2.16). 
 
 Participants can build their own systems by extending the provided baseline system. The system has all needed functionality for the dataset handling, acoustic feature storing and accessing, acoustic model training and storing, and evaluation. The modular structure of the system enables participants to modify the system to their needs. The baseline system is a good starting point especially for the entry level researchers to familiarize themselves with the acoustic scene classification problem. 
 
@@ -61,7 +61,8 @@ The subtask specific baseline system is implemented in file `task1a.py` and `tas
 
 #### System description
 
-The system implements a convolutional neural network (CNN) based approach, where log mel-band energies are first extracted for each 10-second signal, and a network consisting of two CNN layers and one fully connected layer is trained to assign scene labels to the audio signals. Model size of the baseline is 90.82 KB.
+The system implements a convolutional neural network (CNN) based approach, where log mel-band energies are first extracted for each 10-second signal, and a network consisting of two CNN layers and one fully connected layer is trained to assign scene labels to the audio signals. 
+Model size of the baseline when using keras model quantization is 90.82 KB and 89.82 KB when using TFLite quantization.
 
 
 ##### Parameters
@@ -81,7 +82,7 @@ The system implements a convolutional neural network (CNN) based approach, where
   - CNN layer #2
     - 2D Convolutional layer (filters: 16, kernel size: 7) + Batch normalization + ReLu activation
     - 2D max pooling (pool size: (5, 5)) + Dropout (rate: 30%)
-  - CNN layer #2
+  - CNN layer #3
     - 2D Convolutional layer (filters: 32, kernel size: 7) + Batch normalization + ReLu activation
     - 2D max pooling (pool size: (4, 100)) + Dropout (rate: 30%)
   - Flatten
@@ -148,20 +149,20 @@ The system implements a convolutional neural network (CNN) based approach, where
 The cross-validation setup provided with the *TAU Urban Acoustic Scenes 2020 Mobile Development dataset* is used to evaluate the performance of the baseline system. Results are calculated using TensorFlow in GPU mode (using Nvidia Tesla V100 GPU card). Because results produced with GPU card are generally non-deterministic, the system was trained and tested 10 times, and mean and standard deviation of the performance from these 10 independent trials are shown in the results tables.
  
 
-| Scene label       | Accuracy |   A   |   B   |    C  |   S1  |   S2  |   S3  |   S4  |   S5  |   S6  | Log loss|  
-| -------------     | ------   | ----- | ----- |  -----| ----- | ----- | ----- | ----- | ----- | ----- | ------- | 
-| Airport           | 31.1%    | 48.5  |  37.5 |  27.3 |  27.3 |  30.3 |  33.3 |  30.3 |  30.3 |  15.2 |  1.497  | 
-| Bus               | 40.1%    | 75.8  |  36.4 |  57.6 |  24.2 |  48.5 |  18.2 |  21.2 |  33.3 |  45.5 |  1.475  |  
-| Metro             | 48.1%    | 66.7  |  60.6 |  48.5 |  27.3 |  45.5 |  51.5 |  60.6 |  21.2 |  51.5 |  1.457  |  
-| Metro station     | 29.6%    | 42.4  |  42.4 |  33.3 |  18.2 |  18.2 |  24.2 |  24.2 |  36.4 |  27.3 |  2.060  |  
-| Park              | 63.6%    | 84.8  |  75.8 |  90.9 |  63.6 |  60.6 |  57.6 |  36.4 |  60.6 |  42.4 |  1.217  |  
-| Public square     | 36.0%    | 51.5  |  39.4 |  42.4 |  48.5 |  39.4 |  30.3 |  30.3 |  21.2 |  21.2 |  1.738  |  
-| Shopping mall     | 61.3%    | 63.6  |  72.7 |  81.8 |  48.5 |  63.6 |  63.6 |  45.5 |  48.5 |  63.6 |  1.136  |  
-| Pedestrian street | 47.1%    | 63.6  |  63.6 |  57.6 |  63.6 |  42.4 |  45.5 |  21.2 |  36.4 |  30.3 |  1.522  |  
-| Traffic street    | 68.0%    | 78.8  |  69.7 |  60.6 |  75.8 |  60.6 |  66.7 |  69.7 |  75.8 |  54.5 |  1.145  |  
-| Tram              | 44.3%    | 63.6  |  24.2 |  62.5 |  45.5 |  30.3 |  54.5 |  45.5 |  42.4 |  30.3 |  1.360  |  
-| -------------     | ------   | ----- |  -----| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------- |  
-| Accuracy          | **46.9%**<br>(+/-1.4)| 62.4  |  51.3 |  55.0  |  42.7  |  41.2  |  47.3  |  33.9  |  35.2  |  39.1  |  **1.461**<br>(+/-0.08)|  
+| Scene label       | Log Loss |   A   |   B   |   C   |   S1  |   S2  |   S3  |   S4  |   S5  |   S6  | Accuracy|  
+| -------------     | -------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------- | 
+| Airport           | 1.758    | 1.031 | 1.687 | 1.743 | 1.858 | 1.498 | 1.798 | 1.975 | 1.754 | 2.474 | 24.70%  | 
+| Bus               | 1.170    | 0.712 | 1.538 | 0.838 | 1.003 | 1.374 | 0.807 | 1.566 | 1.153 | 1.539 | 58.60%  |  
+| Metro             | 1.719    | 0.895 | 1.726 | 1.204 | 2.750 | 2.060 | 1.591 | 1.439 | 1.833 | 1.974 | 37.40%  |  
+| Metro station     | 1.859    | 1.502 | 1.844 | 2.275 | 2.342 | 2.131 | 1.704 | 1.872 | 1.671 | 1.390 | 38.70%  |  
+| Park              | 1.449    | 0.420 | 0.528 | 0.225 | 1.233 | 1.447 | 1.529 | 3.285 | 1.537 | 2.836 | 60.60%  |  
+| Public square     | 1.629    | 1.257 | 1.506 | 1.098 | 1.823 | 1.383 | 1.363 | 2.067 | 1.929 | 2.232 | 43.80%  |  
+| Shopping mall     | 1.026    | 0.709 | 0.982 | 0.760 | 1.228 | 0.994 | 1.023 | 1.646 | 0.883 | 1.009 | 63.60%  |  
+| Pedestrian street | 1.790    | 1.185 | 1.557 | 1.841 | 1.719 | 1.321 | 1.771 | 2.517 | 2.402 | 1.801 | 30.60%  |  
+| Traffic street    | 1.431    | 0.908 | 1.540 | 1.011 | 1.104 | 1.271 | 1.654 | 1.957 | 1.173 | 2.262 | 64.00%  |  
+| Tram              | 1.680    | 1.358 | 1.570 | 1.207 | 1.056 | 1.765 | 1.298 | 1.840 | 2.714 | 2.303 | 42.20%  |  
+| -------------     | -------- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ------- |  
+| Average          | **1.551**<br>(+/-0.036)| 0.998 |	1.447 |	1.220 |	1.611 |	1.525 |	1.454 |	2.017 |	1.705 |	1.982 |  **46.40%**<br>(+/-0.902)|  
                                                                                 
 
 **Note:** The reported system performance is not exactly reproducible due to varying setups. However, you should be able obtain very similar results.
