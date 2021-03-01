@@ -478,7 +478,7 @@ To see results:
 Code
 ====
 
-The code is built on [dcase_util](https://github.com/DCASE-REPO/dcase_util) toolbox, see [manual for tutorials](https://dcase-repo.github.io/dcase_util/index.html). The machine learning part of the code in built on [Keras (v2.2.2)](https://keras.io/), using [TensorFlow (v1.14.0)](https://www.tensorflow.org/) as backend.
+The code is built on [dcase_util](https://github.com/DCASE-REPO/dcase_util) toolbox, see [manual for tutorials](https://dcase-repo.github.io/dcase_util/index.html). The machine learning part of the code is built on [TensorFlow (v2.1.0)](https://www.tensorflow.org/).
 
 ### File structure
 
