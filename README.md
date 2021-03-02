@@ -30,10 +30,11 @@ To setup Anaconda environment for the system use following:
 	conda install -c anaconda cudnn
 	pip install librosa
 	pip install absl-py==0.9.0
-	pip install dcase_util==0.2.12
 	pip install sed_eval
 	pip install pyyaml==5.3.1
 	
+**Note**: because of tensorflow 2 incompatibilities dcase_util has to be install manually with "python setup.py develop" command.
+
 Introduction
 ============
 
