@@ -715,18 +715,19 @@ def do_learning(db, folds, param, log, overwrite=False):
                     item_list_train.append(item_)
 
             # Setup keras, run only once
-            dcase_util.keras.setup_keras(
+            dcase_util.tfkeras.setup_keras(
                 seed=param.get_path('learner.parameters.random_seed'),
                 profile=param.get_path('learner.parameters.keras_profile'),
                 backend=param.get_path('learner.parameters.backend', 'tensorflow'),
                 print_indent=2
             )
+            import tensorflow.keras as keras
 
             if param.get_path('learner.parameters.generator.enable'):
                 # Create data generators for training and validation
 
                 # Get generator class, class is inherited from keras.utils.Sequence class.
-                KerasDataSequence = dcase_util.keras.get_keras_data_sequence_class()
+                KerasDataSequence = dcase_util.tfkeras.get_keras_data_sequence_class()
 
                 # Training data generator
                 train_data_sequence = KerasDataSequence(
@@ -806,7 +807,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             )
 
             # Create sequential model
-            keras_model = dcase_util.keras.create_sequential_model(
+            keras_model = dcase_util.tfkeras.create_sequential_model(
                 model_parameter_list=param.get_path('learner.parameters.model.config'),
                 constants=model_parameter_constants
             )
@@ -814,7 +815,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             # Create optimizer object
             param.set_path(
                 path='learner.parameters.compile.optimizer',
-                new_value=dcase_util.keras.create_optimizer(
+                new_value=dcase_util.tfkeras.create_optimizer(
                     class_name=param.get_path('learner.parameters.optimizer.class_name'),
                     config=param.get_path('learner.parameters.optimizer.config')
                 )
@@ -827,12 +828,12 @@ def do_learning(db, folds, param, log, overwrite=False):
 
             # Show model topology
             log.line(
-                dcase_util.keras.model_summary_string(keras_model)
+                dcase_util.tfkeras.model_summary_string(keras_model)
             )
 
             # Create callback list
             callback_list = [
-                dcase_util.keras.ProgressLoggerCallback(
+                dcase_util.tfkeras.ProgressLoggerCallback(
                     epochs=param.get_path('learner.parameters.fit.epochs'),
                     metric=param.get_path('learner.parameters.compile.metrics')[0],
                     loss=param.get_path('learner.parameters.compile.loss'),
@@ -843,7 +844,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             if param.get_path('learner.parameters.callbacks.StopperCallback'):
                 # StopperCallback
                 callback_list.append(
-                    dcase_util.keras.StopperCallback(
+                    dcase_util.tfkeras.StopperCallback(
                         epochs=param.get_path('learner.parameters.fit.epochs'),
                         **param.get_path('learner.parameters.callbacks.StopperCallback', {})
                     )
@@ -852,7 +853,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             if param.get_path('learner.parameters.callbacks.ProgressPlotterCallback'):
                 # ProgressPlotterCallback
                 callback_list.append(
-                    dcase_util.keras.ProgressPlotterCallback(
+                    dcase_util.tfkeras.ProgressPlotterCallback(
                         epochs=param.get_path('learner.parameters.fit.epochs'),
                         **param.get_path('learner.parameters.callbacks.ProgressPlotterCallback', {})
                     )
@@ -861,7 +862,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             if param.get_path('learner.parameters.callbacks.StasherCallback'):
                 # StasherCallback
                 callback_list.append(
-                    dcase_util.keras.StasherCallback(
+                    dcase_util.tfkeras.StasherCallback(
                         epochs=param.get_path('learner.parameters.fit.epochs'),
                         **param.get_path('learner.parameters.callbacks.StasherCallback', {})
                     )
@@ -870,7 +871,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             if param.get_path('learner.parameters.callbacks.LearningRateWarmRestart'):
                 # LearningRateWarmRestart
                 callback_list.append(
-                    dcase_util.keras.LearningRateWarmRestart(
+                    dcase_util.tfkeras.LearningRateWarmRestart(
                         nbatch=numpy.ceil(X_train.shape[0] / param.get_path('learner.parameters.fit.batch_size')),
                         **param.get_path('learner.parameters.callbacks.LearningRateWarmRestart', {})
                     )
@@ -900,7 +901,7 @@ def do_learning(db, folds, param, log, overwrite=False):
                 )
 
             for callback in callback_list:
-                if isinstance(callback, dcase_util.keras.StasherCallback):
+                if isinstance(callback, dcase_util.tfkeras.StasherCallback):
                     # Fetch the best performing model
                     callback.log()
                     best_weights = callback.get_best()['weights']
@@ -918,7 +919,7 @@ def do_learning(db, folds, param, log, overwrite=False):
             wsp = [w.astype(tf.keras.backend.floatx()) for w in ws]
 
             # Create quantization model
-            model_quant = dcase_util.keras.create_sequential_model(
+            model_quant = dcase_util.tfkeras.create_sequential_model(
                 model_parameter_list=param.get_path('learner.parameters.model.config'),
                 constants=model_parameter_constants
             )
@@ -1008,7 +1009,7 @@ def do_testing(db, scene_labels, folds, param, log, overwrite=False):
         if not os.path.isfile(fold_results_filename) or overwrite:
             # Load model if not yet loaded
             if not keras_model:
-                dcase_util.keras.setup_keras(
+                dcase_util.tfkeras.setup_keras(
                     seed=param.get_path('learner.parameters.random_seed'),
                     profile=param.get_path('learner.parameters.keras_profile'),
                     backend=param.get_path('learner.parameters.backend', 'tensorflow'),
@@ -1447,7 +1448,7 @@ def do_model_size_calculation(db, folds, param, log):
         )
 
         # Setup keras
-        dcase_util.keras.setup_keras(
+        dcase_util.tfkeras.setup_keras(
             seed=param.get_path('learner.parameters.random_seed'),
             profile=param.get_path('learner.parameters.keras_profile'),
             backend=param.get_path('learner.parameters.backend', 'tensorflow'),
