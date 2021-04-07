@@ -79,7 +79,6 @@ Model size of the baseline when using keras model quantization is 90.82 KB and 8
 - Architecture:
   - CNN layer #1
     - 2D Convolutional layer (filters: 16, kernel size: 7) + Batch normalization + ReLu activation
-    - 2D max pooling (pool size: (5, 5)) 
   - CNN layer #2
     - 2D Convolutional layer (filters: 16, kernel size: 7) + Batch normalization + ReLu activation
     - 2D max pooling (pool size: (5, 5)) + Dropout (rate: 30%)
