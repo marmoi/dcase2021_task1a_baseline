@@ -54,7 +54,7 @@ defaults:
     active_fold_list: !!null
 
   path:
-    dataset: datasets/  
+    dataset: /lustre/TAU-UAS2020/ #datasets/ #
     log: log/
     application:
       base: system/task1a
@@ -78,7 +78,7 @@ defaults:
 
   feature_extractor:
     method: mel
-    fs: 48000
+    fs: 44100
 
   feature_extractor_method_parameters:
     mel:
