@@ -34,7 +34,7 @@ sets:
       method: mel
 
     data_processing_chain:
-      method: flat_chain
+      method: sequencing_chain
 
     learner:
       method: cnn
@@ -54,7 +54,7 @@ defaults:
     active_fold_list: !!null
 
   path:
-    dataset: /lustre/TAU-UAS2020/ #datasets/ #
+    dataset: datasets/
     log: log/
     application:
       base: system/task1a
@@ -73,7 +73,7 @@ defaults:
       evaluation_mode: folds
 
     baseline_evaluation:
-      dataset: TAUUrbanAcousticScenes_2020_Mobile_EvaluationSet
+      dataset: TAUUrbanAcousticScenes_2021_Mobile_EvaluationSet
       evaluation_mode: full
 
   feature_extractor:
